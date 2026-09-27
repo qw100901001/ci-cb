@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: write  
 
     steps:
       - name: Checkout
@@ -55,22 +56,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-# =====================================================================
-# 有自己服务器时，在下面追加一个 deploy job（示例，按需打开）：
-#
-#  deploy:
-#    needs: build-and-push
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Deploy via SSH
-#        uses: appleboy/ssh-action@v1
-#        with:
-#          host: ${{ secrets.SERVER_HOST }}
-#          username: ${{ secrets.SERVER_USER }}
-#          key: ${{ secrets.SERVER_SSH_KEY }}
-#          script: |
-#            docker pull ghcr.io/<owner>/<repo>:latest
-#            docker stop ci-cb || true
-#            docker rm ci-cb || true
-#            docker run -d --name ci-cb -p 80:80 ghcr.io/<owner>/<repo>:latest
-# =====================================================================
+
