@@ -7,11 +7,12 @@ WORKDIR /app
 RUN corepack enable
 
 # 先拷贝清单文件，充分利用 Docker 层缓存：依赖不变时跳过 install
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc turbo.json tsconfig.json ./
 COPY apps ./apps
 COPY packages ./packages
 
 RUN pnpm install --frozen-lockfile
+ENV TURBO_NO_CACHE=1
 RUN pnpm build
 
 # ---------- 阶段二：运行 ----------
