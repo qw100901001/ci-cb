@@ -18,6 +18,12 @@ jobs:
   ci:
     name: Lint & Test & Build
     runs-on: ubuntu-latest
+
+    # 🚀 新增：把远程缓存凭证注入环境变量
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
