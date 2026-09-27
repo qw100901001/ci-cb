@@ -1,0 +1,13 @@
+# 本地一键验证整套部署（需先安装 Docker）：
+#   docker compose -f docker/docker-compose.yml up --build
+# 然后访问 http://localhost:8080
+services:
+  ci-cb:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: ci-cb:latest
+    container_name: ci-cb-micro-frontend
+    ports:
+      - '8080:80'
+    restart: unless-stopped
