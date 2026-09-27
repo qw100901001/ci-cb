@@ -47,8 +47,10 @@ const menus = [
       </header>
 
       <main class="content">
-        <!-- 主应用自身页面 -->
-        <router-view v-show="!isMicroRoute" />
+        <!-- 主应用自身页面（v-show 不能直接放 router-view 上：其渲染结果是 fragment，指令不生效） -->
+        <div v-show="!isMicroRoute" class="page-host">
+          <router-view />
+        </div>
 
         <!-- qiankun 子应用挂载容器：常驻 DOM，避免挂载竞态；仅子应用路由时可见 -->
         <div id="subapp-viewport" v-show="isMicroRoute"></div>

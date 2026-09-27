@@ -4,6 +4,11 @@ import { formatDate } from '@cb/shared'
 import { computed, ref } from 'vue'
 import { qiankunWindow } from 'vite-plugin-qiankun/es/helper'
 
+// qiankun 会额外注入 mountParcel / singleSpa 等未在此声明的对象 props，
+// 关闭 attrs 自动透传，避免 Vue 把它们 setAttribute 到根元素上
+// （对象无法转换为字符串会抛 "Cannot convert object to primitive value"）
+defineOptions({ inheritAttrs: false })
+
 // 主应用注入的 props（getUserInfo / setGlobalState 等）
 const props = defineProps<Partial<SubAppMountProps>>()
 

@@ -100,6 +100,9 @@ git push -u origin main
 | 决策 | 原因 |
 | --- | --- |
 | Vite 5 + vite-plugin-qiankun | qiankun 依赖 UMD 产物，Vite 需插件桥接（dev 用 SystemJS、prod 注入 lifecycle）；Vite 5 是该插件验证过的组合 |
+| sub-react dev 模式不加载 @vitejs/plugin-react | 其注入的 react-refresh preamble 是 module 脚本，qiankun 用 eval 执行会报 `Cannot use import statement outside a module`，导致 bootstrap 超时；生产构建不受影响 |
+| sub-vue 根组件 `inheritAttrs: false` | qiankun 注入的 `mountParcel` 等未声明 props 会被 Vue 当 attrs 透传到根元素，`setAttribute` 对象时报错 |
+| 基座 `await router.isReady()` 后再启动 qiankun | 懒加载路由未解析完就 `start()`，直接刷新 `/sub-*` 会找不到 `#subapp-viewport` |
 | cheerio 锁定 1.0.0-rc.12（pnpm overrides） | 新版 cheerio 纯 ESM 无 default export，会炸 vite-plugin-qiankun 构建 |
 | 子应用容器 `#subapp-viewport` 常驻 DOM（v-show） | 避免条件渲染与 qiankun 挂载的竞态 |
 | props 传 getter 而非值 | 子应用每次调用读到基座 Pinia 最新登录态 |

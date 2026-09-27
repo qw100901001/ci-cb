@@ -115,11 +115,13 @@ const proxy = new Proxy(fakeWindow, {
 ## Q11：qiankun 常见的坑（部署/联调）
 
 **答**（每条都在本仓库处理过或验证过）：
-1. dev 下主应用 fetch 子应用 entry 跨域 → 子应用 `server.cors: true`，且要配 `origin` 修正资源绝对路径；
-2. 生产白屏 → `base` 必须等于部署子路径（`/sub-react/`），nginx `try_files` 兜底；
-3. `application 'xx' died in status LOADING_SOURCE_CODE` → entry 拿不到/404，或产物没暴露生命周期（UMD 名字不匹配）；
-4. 容器找不到（container not found）→ 注册的容器选择器在激活那一刻不在 DOM（条件渲染竞态），本仓库让 `#subapp-viewport` 常驻 DOM 用 `v-show` 控制；
-5. 子应用 window 事件/定时器没清 → unmount 钩子里必须回收。
+1. **React 子应用 + @vitejs/plugin-react**：dev 注入的 react-refresh 是 module 脚本，qiankun 用 eval 执行报 `Cannot use import statement outside a module`，连锁导致 bootstrap 超时 → dev 模式不加载该插件，用 Vite 原生 esbuild 编译 JSX；
+2. **Vue 子应用 mount 崩溃 `setAttribute: Cannot convert object to primitive value`**：qiankun 注入的 `mountParcel` 等未声明 props 被 Vue 当 attrs 透传到根元素 → 根组件 `defineOptions({ inheritAttrs: false })`；
+3. **直接刷新子应用路由报容器不存在**：懒加载路由未 ready 就 `start()` → 基座 `await router.isReady()` 后再挂载与启动；
+4. dev 下主应用 fetch 子应用 entry 跨域 → 子应用 `server.cors: true`，且要配 `origin` 修正资源绝对路径；
+5. 生产白屏 → `base` 必须等于部署子路径（`/sub-react/`），nginx `try_files` 兜底；
+6. `application 'xx' died in status LOADING_SOURCE_CODE` → entry 拿不到/404，或产物没暴露生命周期（UMD 名字不匹配）；
+7. 子应用 window 事件/定时器没清 → unmount 钩子里必须回收。
 
 ## Q12：公共依赖怎么处理？（vue/react 只打一份）
 
